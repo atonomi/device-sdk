@@ -1,0 +1,104 @@
+%%--------------------------------------------------
+%% page layout
+\settrimmedsize{\stockheight}{\stockwidth}{*}
+\setlength{\trimtop}{0em}
+\setlength{\trimedge}{0em}
+\setlrmarginsandblock{3.5cm}{3.5cm}{*}
+\setulmarginsandblock{3.5cm}{3.0cm}{*}
+\setheadfoot{\onelineskip}{1.5cm}            % headht, footskip
+\setheaderspaces{*}{1.0cm}{*}                % headdrop, headsep
+\checkandfixthelayout
+
+\setlength{\parindent}{0em}
+\setlength{\parskip}{1.0em}
+
+\chapterstyle{ell}
+\setsecnumdepth{subsection}                  % chapter.section.subsection
+
+\copypagestyle{thisdoc}{empty}
+\makeevenfoot{thisdoc}{}{\thepage}{}
+\makeoddfoot {thisdoc}{}{\thepage}{}
+%\makeevenhead{thisdoc}{}{%
+%	\textbf{\smaller Note: this is an early draft. It's known to be incomplet and
+%  	  incorrekt, and it has lots of
+%  	  b\kern-1.2pta\kern1ptd\hspace{1.5em}for\kern-3ptmat\kern0.6ptti\raise0.15ex\hbox{n}g.}%
+%}{}
+%\makeoddhead {thisdoc}{}{%
+%	\textbf{\smaller Note: this is an early draft. It's known to be incomplet and
+%  	  incorrekt, and it has lots of
+%  	  b\kern-1.2pta\kern1ptd\hspace{1.5em}for\kern-3ptmat\kern0.6ptti\raise0.15ex\hbox{n}g.}%
+%}{}
+\pagestyle{thisdoc}
+
+% Listings format/style.
+\definecolor{srclineno}{rgb}{0.3,0.3,0.3}
+\definecolor{srckeyword}{rgb}{0.1,0.1,0.8}
+\lstset{backgroundcolor=\color{white},
+        breaklines=false,
+        captionpos=t,
+        extendedchars=true,
+        frame=shadowbox,
+        rulesepcolor=\color{srclineno},
+%        frame=trBL,
+        keepspaces=true,
+        keywordstyle=\color{srckeyword},
+%        language=C,
+        morekeywords={uint8_t,int32_t,const,restrict,void,size_t},
+        numbers=left,
+        numbersep=1.0em,
+        numberstyle=\tiny\color{srclineno},
+        showspaces=false,
+        showtabs=false,
+        showstringspaces=false,
+        stepnumber=1,
+        tabsize=8,
+        title=\lstname
+}
+
+% Caption format/style.
+\captionsetup{labelfont={footnotesize,bf},
+              textfont={footnotesize,sl},
+              labelsep=period,
+              format=hang,
+              justification=raggedright,
+              width=0.75\textwidth,
+              singlelinecheck=false}
+
+
+%%--------------------------------------------------
+%% fix interaction between hyperref and other
+%% commands
+\pdfstringdefDisableCommands{\def\smaller#1{#1}}
+\pdfstringdefDisableCommands{\def\textbf#1{#1}}
+\pdfstringdefDisableCommands{\def\raisebox#1{}}
+\pdfstringdefDisableCommands{\def\hspace#1{}}
+
+
+%%--------------------------------------------------
+%% turn off all ligatures inside \texttt
+\DisableLigatures{encoding = T1, family = tt*}
+
+
+\setlist[itemize]{parsep=\parskip, partopsep=0pt, itemsep=0pt, topsep=0pt,
+                  beginpenalty=10 }
+\setlist[enumerate]{parsep=\parskip, partopsep=0pt, itemsep=0pt, topsep=0pt}
+
+
+%%--------------------------------------------------
+%% Title Page
+\newlength\drop
+\makeatletter
+\newcommand*\mtitle{\begingroup%
+	\setlength\drop{0.08\textheight}
+	\centering
+	\vspace*{\drop}
+	\textbf{\fontsize{26}{31}\selectfont Atonomi Embedded Device SDK}\\[\baselineskip]
+	{\Huge Developer Guide and API Reference}\\[\baselineskip]
+	\vfill
+	\par
+	\vfill
+	{\Large Document Version 1.0.20180515}\par
+	\vspace*{2\drop}
+\endgroup}%
+\makeatother
+

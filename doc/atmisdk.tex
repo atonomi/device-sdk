@@ -1,0 +1,75 @@
+% Atonomi SDK Documentation
+% Andrew Reading, Grant Fjermedal et. al.
+%
+\documentclass[letterpaper,10pt,oneside,openany,final]{memoir}
+
+\usepackage[english]
+           {babel}
+\usepackage[english]
+           {isodate}
+\usepackage[final]
+           {listings}     % Code listings
+\usepackage{caption}      % Captions
+\usepackage{longtable}    % Auto-breaking tables
+\usepackage{ltcaption}    % Fix captions for long tables
+\usepackage{relsize}      % Provide relative font size changes
+\usepackage{float}        % Float code listings/tables
+%\usepackage{placeins}    % Float barriers
+\usepackage{underscore}   % Remove special status of '_' in ordinary text
+\usepackage{parskip}      % Handle non-indented paragraphs "properly"
+\usepackage{array}        % New column definitions for tables
+\usepackage[normalem]{ulem}
+\usepackage{enumitem}
+\usepackage{color}        % Define colors for strikeouts and underlines
+\usepackage{amsmath}      % Math symbols
+\usepackage{url}          % URL formatting
+\usepackage[final]{microtype}
+\usepackage{fix-cm}
+%\usepackage{lmodern}
+%\usepackage[scaled=.92]{helvet}
+%\usepackage[defaultfam,light,tabular,lining]{montserrat}
+\usepackage{anyfontsize}
+\usepackage[sfdefault,medium]{plex-sans}
+\usepackage[T1]{fontenc}
+\usepackage[pdftex, final]{graphicx}
+\usepackage[pdftex,
+            pdftitle={Atonomi Device SDK},
+            pdfsubject={Atonomi Device SDK},
+            pdfcreator={Andrew Reading},
+            bookmarks=true,
+            bookmarksnumbered=true,
+            pdfpagelabels=true,
+            pdfpagemode=UseOutlines,
+            pdfstartview=FitH,
+            linktocpage=true,
+            colorlinks=true,
+            linkcolor=blue,
+            plainpages=false
+           ]{hyperref}
+\usepackage{memhfixc}     % Fix interactions between hyperref and memoir
+\usepackage{lipsum}       % Lorem ipsum
+
+\pdfminorversion=5
+\pdfcompresslevel=9
+\pdfobjcompresslevel=2
+
+\input{page.tex}
+
+
+
+%%--------------------------------------------------
+%% Begin Document
+\begin{document}
+
+
+\input{title.tex}
+\input{intro.tex}
+\input{overview.tex}
+\input{api.tex}
+%\input{appendix.tex}
+
+
+%%--------------------------------------------------
+%% End document
+\end{document}
+

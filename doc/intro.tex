@@ -1,0 +1,113 @@
+%%--------------------------------------------------
+%% Intro
+\chapter{Introduction to Atonomi}
+
+Atonomi provides a network solution which tackles the question of how to
+establish identity, trust, and reputation of IoT devices. The blockchain-based
+approach allows companies to securely exchange services and data to, from, and
+involving these devices.
+
+\urldef{\atmiwpurl}\url{https://uploads-ssl.webflow.com/5a9f110b6e90d20001b2307d/5aa600a2dc199e000140f98a_Atonomi-Network-White-Paper-v0.9.1.3s%20(1).pdf}
+
+The Atonomi whitepaper \footnote{\atmiwpurl}
+provides a more complete description of the Atonomi network. The information
+that follows is a brief overview of the important concepts.
+
+
+\section{Device Identity}
+The concept of device identity (sometimes referred to as the identity token)
+is essential to securing IoT devices on the Atonomi Network. Based upon the
+capabilities of the hardware this identity token could be represented by a
+variety of things. Ideally it is a device_id embedded within a secure hardware
+element on the device. Device identity will be created during the device or
+application development process. Developers need to ensure a unique identifier
+is given to each device as the Atonomi Network doesn't allow duplicate
+registrations. Identity also incorporates an Elliptic Curve 25519 public/private
+key pair created during the either the development or manufacturing process,
+as this is required for later device registration with Atonomi. The SDK includes
+an EC 25519 key generation tool.
+
+
+\section{Device Registration}
+The Atonomi Identity Registration Service (IRS) is the primary component,
+that when globally distributed, becomes the central hub of the Atonomi Identity
+Registry Network (IRN). The IRS is a cloud-based, globally accessible, highly
+available, high volume service that essentially provides the first step in the
+Atonomi process. Devices that have been Atonomi enabled via the Atonomi Embedded
+SDK will contact the Identity Registration Service upon first production boot.
+Devices will submit to the IRS their identity token. The manufacturer or
+developer of the device will have pre-registered that devices identity with the
+IRS via the manufacturer GUI. Assuming the IRS finds a match to the devices
+identity in its white-list, the device will become activated (within the
+Atonomi network).
+
+\textbf{Note:} The Atonomi smart contract includes a device registration
+function that writes
+new device_ids to the blockchain when the manufacturer or developer adds new
+devices to the whitelist via the interface. The Atonomi smart contract also
+facilitates the payment in ATMI for the Registration of devices.
+
+
+\section{Device Activation}
+The Atonomi Activation Functionality comes into play after the Atonomi enabled
+device has been sold to an end user. The end user will receive activation
+instructions that send them to the Atonomi web portal where they will enter the
+device identifier and pay for device activation via MetaMask. The Atonomi
+Embedded SDK, integrated into the application code by the developer or OEM,
+will contact the Activation Service upon first production boot. Assuming the
+IRS finds a match to the devices identity in its whitelist, its signature is
+verified, and the activation payment cleared, the device will become activated
+within the Atonomi network.
+
+\textbf{Note:} The instructions the device owner receives will include a URL
+for a device activation portal and the public device_id for the device. The
+portal will be a simple web page, backed by the MetaMask plugin that will take
+in the device_id and when the Activate `button' is pressed invoke MetaMask to
+handle the activation transaction.
+
+
+\section{Device Validation \&{} Reputation}
+Devices that have been Atonomi enabled via the Atonomi Embedded SDK and that
+have successfully registered and activated on the Atonomi network can begin to
+utilize the Atonomi Validation functionality. Devices will exchange their
+signed device identifier with other devices that they want to transact with.
+Each device can then call the Atonomi Validation Service, pass in its
+counterpart's signed device identifier and receive back an indicator of
+whether or not the device is an Atonomi network `member' or not. In the event
+that the other device is a member of the network, the Atonomi Validation
+Service will also send back the current reputation for that device.
+
+\textbf{Note:} For the purposes of Validation the Embedded SDK will have two
+additional methods for validating another devices identity. The first
+method will involve producing a CENTRI Protected Sessions handshake package
+to be sent to another device for validation. The second method will involve
+taking in a signed device identity (from another device via the Protected
+Sessions handshake) and submitting it to the Atonomi Validation Service
+to be validated. The latter method will return a reputation score if the
+other device is valid.
+
+
+
+\section{Atonomi Smart Contract}
+The Atonomi smart contract includes three basic functions:
+Registration, Activation, and Reputation.
+
+The Registration Function of the Atonomi smart contract governs the writing
+of a new manufacturer member and their Ethereum address to the blockchain
+during manufacturer setup. It also governs the writing of new device_ids to
+the blockchain when the manufacturer adds new devices to the whitelist
+via the interface. It also facilitates the payment in ATMI for the
+Registration of devices.
+
+
+The Activation Function of the Atonomi smart contract governs the writing
+of newly activated device_ids to the blockchain when the device owner boots
+the device and activates it via the interface. It also facilitates the payment
+in ATMI for the activation of devices.
+
+
+The Reputation Function of the Atonomi smart contract governs the writing of
+updated device reputation scores to the blockchain after the reputation
+auditors have processed the reports. It also facilitates the payment in
+ATMI for the reputation score updates.
+

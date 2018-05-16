@@ -1,0 +1,133 @@
+﻿Atonomi SDK License Agreement
+
+Last Updated: May 15, 2018
+
+This Atonomi SDK License Agreement (“Agreement”) between you and the 
+company or entity that you represent (“You” or “Your”) and Atonomi, 
+LLC, and its affiliates, (collectively, “Atonomi”) governs Your access and 
+use, in whole or in part, of the Atonomi software development and any related 
+documentation, as may be updated by Atonomi from time to time 
+(“Documentation”), software code (including sample code), tools, and APIs, 
+including any upgrades, modified versions, updates, additions, and copies of 
+the foregoing licensed to You by Atonomi (collectively, “SDK”). By 
+downloading, accessing or using the SDK, You hereby agree to the terms of this 
+Agreement. If You are using the SDK on behalf of an entity, You represent and 
+warrant that You have full legal authority to bind that entity to this 
+Agreement, and by accepting the Agreement or downloading, accessing or using 
+the SDK, You are doing so on behalf of that entity, and all references to You 
+or Your in the Agreement refer to that entity. If You do not agree to all the 
+terms of this Agreement, do not download, access, or use the SDK.
+
+1. License. Subject to Your compliance with this Agreement, Atonomi hereby 
+grants You a limited, worldwide, personal, non-sublicensable, non-transferable, 
+royalty-free, non-exclusive license to use the SDK solely for developing 
+applications that are compatible with the Atonomi protocol (“Applications”).
+
+2. Restrictions. Except as expressly permitted by Atonomi, You shall not 
+directly or indirectly (or assist or allow a third party to) (a) distribute, 
+sell, sublicense, rent, loan, lease, or transfer the SDK to any third party, 
+(b) use the SDK to create or facilitate the creation of any product or service 
+that is competitive with the Atonomi protocol, or (c) combine the SDK with 
+other software such that You restrict, impede, circumvent, compromise, impact 
+the functionality of or charge for access to the SDK. Further, if Atonomi makes 
+available and You use the SDK in compiled form, You shall not copy (except for 
+backup purposes), decompile, disassemble, translate, reverse engineer, modify, 
+adapt, or create derivative works of the SDK (including the runtime components 
+and any other portions thereof).
+
+3. Trademarks. Atonomi grants to You a worldwide, non-exclusive, 
+non-transferable, personal right to use the Atonomi’s logo, as set forth in 
+its trademark usage guidelines (“Trademark”), pursuant to the terms of this 
+License Agreement. The Trademark may be used in Your Application, on Your 
+website, and in printed and electronic communications to indicate that Your 
+Application is compatible with the Atonomi protocol.
+
+4. Ownership. As between the parties, title, ownership, and all 
+intellectual property rights in and to the SDK, and any copies or portions 
+thereof, shall remain with Atonomi and its suppliers or licensors. You may not 
+assign or transfer Your rights or obligations granted under this Agreement to 
+any third party without the prior written consent of Atonomi. Atonomi may 
+collect and use comments, feedback, suggestions, and other information provided 
+by You, if any, related to the SDK, and Atonomi may use this information to 
+improve, develop, and otherwise provide applications, services and technologies 
+without any obligation to You. Atonomi may modify or discontinue offering the 
+SDK at any time. The SDK is protected by the copyright laws of the United 
+States and international copyright treaties.
+
+5. Updates and Support. If Atonomi makes available any upgrades, patches, 
+enhancements, or fixes for the SDK (“Updates”), such Updates will become 
+part of the SDK and subject to this Agreement. Atonomi shall have no obligation 
+to provide any Updates or any other support to You for the SDK. Atonomi may 
+make such support services available to You under a separate agreement and for 
+a fee. Atonomi may permanently or temporarily stop providing the SDK, features 
+within the SDK, or support for the SDK at Atonomi’s sole discretion, without 
+prior notice.
+
+6. Warranty and Disclaimer; Indemnity. Atonomi provides the SDK “as is” 
+and without warranty of any kind, and Atonomi hereby disclaims all express or 
+implied warranties, including warranties of merchantability, fitness for a 
+particular purpose, performance, accuracy, reliability, availability, 
+compatibility, and non-infringement. Your use of the SDK and any material 
+downloaded or otherwise obtained through the use of the SDK is at Your own 
+discretion and risk and You are solely responsible for any damage to Your 
+computer system or other device or loss of data, lost profits or revenue that 
+directly or indirectly results from such use. You agree to indemnify and hold 
+harmless Atonomi from any and all claims, demands, damages, losses, 
+liabilities, costs, and expenses (including attorney’s fees) arising from 
+Your use of the SDK.
+
+7. Limitation of Liability. Under no circumstances (and under no legal 
+theory, tort, contract, strict liability, or otherwise) shall Atonomi, its 
+affiliates, licensors or suppliers be liable to You or any other person for any 
+direct, indirect, special, incidental, or consequential damages of any 
+character, even if foreseeable, including cost of substitute technology, 
+damages for lost profits, loss of goodwill, work stoppage, accuracy of results, 
+loss of data, computer failure or malfunction. Nothing in this Agreement will 
+exclude or limit either party’s liability in respect of: (a) death or 
+personal injury caused by the negligence of that party; (b) fraud (including 
+fraudulent misrepresentation); or (c) any liability which may not otherwise be 
+lawfully excluded or limited.
+
+8. Indemnification. You agree to indemnify, hold harmless, and defend 
+Atonomi from and against any claims or lawsuits, including attorneys’ fees, 
+that arise or result from the use and distribution of your Applications that 
+contain or is based upon any portion of the SDK, provided that Atonomi gives 
+You prompt written notice of any such claim, tenders to You the defense or 
+settlement of such a claim at Your expense and cooperates with You, at Your 
+expense, in defending or settling such claim.
+
+9. Termination. You may terminate this Agreement and the license granted 
+herein at any time by ceasing Your use of the SDK and destroying or removing 
+from all hard drives, networks, and other storage media all copies of the SDK. 
+Atonomi may terminate this Agreement and the license granted herein and 
+immediately disable Your use of and access to the Atonomi protocol if You 
+breach any provision of this Agreement. Sections 4, 6, 7, 8 shall survive 
+termination of this Agreement.
+
+10. Export Controls. You shall not distribute or export the SDK outside the 
+United States in a manner that is prohibited by applicable export laws, 
+restrictions, and regulations. You represent and warrant that You (a) are not 
+located in, under the control of, or a national or resident of any country to 
+which the United States has embargoed goods or services; (b) are not identified 
+as a “Specially Designated National;” by the Office of Foreign Assets 
+Control; (c) are not placed on the U.S. Commerce Department’s Denied Persons 
+List; and (d) will not access or use the SDK if any applicable laws in Your 
+country prohibit You from doing so in accordance with this Agreement.
+
+11. Miscellaneous. Atonomi may modify the terms of this Agreement or any 
+additional terms that apply to the SDK and the Applications at any time and it 
+is Your responsibility to look at the Agreement regularly for updates. You 
+shall not assign or transfer any part of this Agreement to any third party. 
+This Agreement represents the complete agreement concerning this license 
+between the parties and supersedes all prior agreements and representations 
+between them. If any provision of this Agreement is to be held unenforceable 
+for any reason, such provision shall be reformed only to the extent necessary 
+to make it enforceable. If there is conflicting language between this Agreement 
+and any other agreement governing Your use of the SDK, the terms of this 
+Agreement will control. This Agreement shall be governed by, and construed in 
+accordance with, the laws of the State of Washington, without reference to 
+conflicts of laws principles. The parties agree that the federal and state 
+courts in King County, Washington will have exclusive jurisdiction and venue 
+under this Agreement, and the parties hereby agree to submit to such 
+jurisdiction exclusively.
+

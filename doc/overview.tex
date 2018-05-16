@@ -1,0 +1,126 @@
+%%--------------------------------------------------
+%% Overview
+\chapter{Embedded Device SDK}
+
+Atonomi's Embedded Device SDK is a software library providing mechanisms to communicate
+with the Atonomi network. Atonomi provides a network solution which tackles
+the question of how to establish identity, trust, and reputation of IoT devices.
+The blockchain-based approach allows companies to securely exchange services
+and data to, from, and involving these devices.
+
+The Embedded Device SDK provides a small-footprint code implementation of
+messaging routines for communications between an IoT device and the Atonomi
+Identity Registration Network (IRN). Aimed at embedded systems, this library
+is intended to be easy to use, integrate, and deploy, and provides support
+for vast numbers of SoCs and operating environments, especially those which
+leverage ARM Cortex-M or Cortex-A IP cores.
+
+The SDK supports three service endpoints: Activation, Validation, and Reputation.
+
+
+\section{Terms}
+The following terms are used throughout this document and associated source code.
+
+\begin{itemize}
+	\item A \textit{Protected Session (PS)} is a solution developed by CENTRI
+		Technology which provides secure, encrypted communications between
+		devices. Atonomi leverages this solution to secure sensitive
+		data.
+	\item A \textit{message} is a plaintext representation of some form of
+		device-identifying information. These are secured directly via
+		CENTRI Protected Sessions.
+	\item The term \textit{envelope} is a container for data that is to be
+		protected via a Protected Session. Envelopes are encrypted, fully
+		secure, and contain no plaintext \textit{messages}. Plaintext
+		\textit{messages} can be recovered, however, but only after
+		the \textit{envelope} is decrypted (\textit{i.e.}, opened).
+	\item Several bytes are prepended to the protected \textit{envelope} to
+		form the Atonomi \textit{packet}. These \textit{packets} comprise
+		the core messaging protocol between devices and Atonomi servers.
+\end{itemize}
+
+
+\section{Device Requirements}
+\begin{itemize}
+	\item Developers are required to implement a callback to obtain random data from
+a Hardware Random Number Generator.
+	\item The SDK functions use up to four kilobytes (4096 bytes) of stack space.
+		Developers are responsible for ensuring this space is available
+		in order to prevent a stack overflow or stack-heap collision.
+	\item errno-compatible declarations must be available. Developers may either
+		include errno.h from a platform's libc, or instead use the provided
+		atmi_errno.h file. The SDK is careful to restrict itself to those
+		values which are consistent across all major UNIX platforms (Linux, BSD,
+		Solaris, AIX, IRIX, etc.), so the source of errno declarations
+		that is most convenient should be preferred.
+\end{itemize}
+
+\textbf{Note:} Any modifications to the SDK code, in whole or in part, may
+result in a failure to successfully communicate with Atonomi servers.
+
+
+\section{Public Repositories \&{} Project Layout}
+The SDK is made available via a GitHub-hosted git repository
+\footnote{\url{https://github.com/atonomi/device-sdk}},
+where it can easily be cloned or otherwise downloaded for use.
+
+The SDK is currently distributed as a pre-compiled static library for
+various architectures, along with a header file providing a C language
+API for use by developers to construct packetized messages for
+the Atonomi network. All libraries are located within the
+\texttt{lib/} subdirectory, and all include files are located within the
+\texttt{include/} subdirectory. See table \ref{t:libatmi_arches} for more
+details about supported platforms.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{l l l}
+	\textbf{ISA Family} & \textbf{Core Family} & \textbf{Provided Static Library} \\
+	\hline
+	\texttt{x86_64} & Intel/AMD (64-bit,SSE2)              & \texttt{libatmi-x64-X.Y.Z.a}    \\
+	\texttt{armv6m} & Cortex-M0/M0+/M1 only (32-bit,Thumb) & \texttt{libatmi-armv6m-X.Y.Z.a} \\
+	\texttt{armv7m} & Cortex-M, except -M0 (32-bit,Thumb2) & \texttt{libatmi-armv7m-X.Y.Z.a} \\
+	\texttt{armv7a} & Cortex-A (32-bit,ARM)                & \texttt{libatmi-armv7a-X.Y.Z.a} \\
+\end{tabular}
+\caption{Machine architectures currently supported by Atonomi. Note \texttt{X},
+	\texttt{Y}, and \texttt{Z} indicate arbitrary numeric values which
+	collectively denote the library's release version.}
+\label{t:libatmi_arches}
+\end{table}
+
+A usage example of pack and unpack routines for an endpoint is present within
+the \texttt{example/} subdirectory. Alongside this is a shell script which
+uses the \texttt{curl} utility to demonstrate a successful HTTP transaction
+with Atonomi servers and the receipt of a response to the submitted request.
+
+
+\section{Endpoints \&{} HTTP}
+The SDK allows one to pack and unpack messages into a secure bytestream
+for transmission to and from Atonomi servers. Due to not every device
+necessarily having a means of connecting directly to the Internet, no
+means of performing this transfer are included in the SDK, and the developer
+is responsible for providing the means to do this.
+
+Communications are performed via a simple HTTP-based transaction mechanism
+(HTTP version 1.1, specifically). A secure, packed message is provided to
+Atonomi servers as the entire body of an HTTP PUT request, and the server
+will return the corresponding secure, packed response as the body of an
+HTTP 200 (OK) response. No special content encoding is required for the
+HTTP transaction, and only two headers are required:
+``\texttt{Content-Type:~application/octet-stream}'', and
+``\texttt{Content-Length:~DDD}'', where \texttt{DDD} is the numeric length
+of the packed request in bytes, expressed in base-10 decimal form.
+
+Corresponding endpoint URLs for the supported request types are:
+
+\begin{center}
+\begin{tabular}{l l}
+	\textbf{Action} & \textbf{Endpoint URL} \\
+	\hline
+	Activation & \texttt{http://device.atonomi.net/activation} \\
+	Validation & \texttt{http://device.atonomi.net/validation} \\
+	Reputation & \texttt{http://device.atonomi.net/reputation} \\
+\end{tabular}
+\end{center}
+
+

@@ -1,0 +1,200 @@
+%%--------------------------------------------------
+%% API Reference
+\chapter{API Reference}
+
+\section{Common Library Context}
+An \texttt{atmi_context_t} provides a context to API functions with keying
+information. This structure must be populated with public and private keys
+for use during the packing or unpacking of messages.
+
+\begin{lstlisting}[name=Context Structure]
+typedef struct {
+	uint8_t   publicKey[32];
+	uint8_t   privateKey[32];
+} atmi_context_t;
+\end{lstlisting}
+
+The \texttt{atmi_context_t} structure is only needed for read access and
+may reside in constant / non-volatile memory if desired. Alternatively,
+a developer may prefer to construct this on the stack prior to each use
+and explicitly clear it afterwards, minimizing exposure to the private key.
+Both methods are acceptable.
+
+\begin{lstlisting}
+extern void ATMI_memrand(void *p, size_t n);
+\end{lstlisting}
+
+The CENTRI component of the Atonomi packet requires a source of entropy
+in order to create any new packages (i.e. an RNG). Due to a limitation in
+how they are currently generated, this is exposed not by function pointer
+but by declared symbol that the linker is expected to locate.
+
+The \texttt{ATMI_memrand} symbol has been aliased to an Atonomi-specific
+symbol name for improved clarity and must be provided by the developer:
+he or she must declare a function with this exact signature below.
+The function must have C linkage and should obtain the specified number of
+bytes of random entropy from a hardware RNG or other similar source and write
+them into the location provided.
+
+\textbf{Note:} A CSPRNG (cryptographically secure PRNG) could also suffice
+in some cases. All implementation details and choices are left up to the
+developer, whom is expected to understand the ramifications and potential
+security impacts resulting from said choice.
+
+
+\section{Session-based Messaging}
+The Atonomi network protocol uses session-based messages, where every
+request requires a response to be generated and processed. In order to
+accomplish this on the device, some memory must be reserved to store
+session data for use in processing the response to a corresponding request.
+Note this data is unique to each request packet generated. Once the
+response is received for that request, however, the state data may be
+discarded.
+
+\begin{lstlisting}[name=Session Structure]
+typedef struct {
+	uint8_t    state[ATMI_SESSBUF_STATE_SIZE];
+	uint8_t    packet[ATMI_SESSBUF_SIZE];
+} atmi_session_t;
+\end{lstlisting}
+
+The developer is responsible for allocating an \texttt{atmi_session_t}
+structure, which provides storage for packet state during a transfer,
+as well as a working buffer for operations. All message operations
+clobber the contents of this buffer; all packing operations
+place their output data in this buffer.
+
+
+
+\section{Messages for Device Activation}
+\begin{lstlisting}[name=Activation Request and Response Structures]
+typedef struct {
+	uint8_t  id_requestor[32];
+} atmi_act_request_t;
+
+typedef struct {
+	int32_t  success;
+} atmi_act_response_t;
+\end{lstlisting}
+
+The \texttt{id_requestor} field should be populated with the device ID that
+corresponds to the device making the request.
+
+The \texttt{success} field returned from the server will be zero if the
+request was successful, and negative otherwise.
+
+\begin{lstlisting}[name=Activation Request Packing and Response Unpacking Functions]
+int ATMIpack_act_request(const atmi_context_t *ctx,
+                         atmi_session_t *ssn,
+                         const atmi_act_request_t *act);
+
+int ATMIunpack_act_response(const atmi_context_t *ctx,
+                            atmi_session_t *ssn,
+                            const void *pinbuf, size_t nin,
+                            atmi_act_response_t *act);
+\end{lstlisting}
+
+The pack request and unpack response functions require \texttt{ctx}, a pointer
+to the Atonomi library context structure with key data, and \texttt{ssn},
+a pointer to a new or current session structure. The pack function will
+construct an encrypted message with the data in \texttt{act}. The unpack function
+will read \texttt{nin} bytes of packed, encrypted data from \texttt{pinbuf},
+decrypt it, and place the response contents in \texttt{act}.
+
+
+
+\section{Messages for Device Validation}
+\begin{lstlisting}[name=Validation Request and Response Structures]
+typedef struct {
+	uint8_t  id_requestor[32];
+	uint8_t  id_subject[32];
+} atmi_val_request_t;
+
+typedef struct {
+	int32_t  reputation;
+} atmi_val_response_t;
+\end{lstlisting}
+
+The \texttt{id_requestor} field should be populated with the device ID that
+corresponds to the device making the request. The \texttt{id_subject} field
+should be populated with the device ID of the device to validate.
+
+The \texttt{reputation} field returned from the server corresponds to the
+subject's reputation score. This will be zero if the request was unsuccessful.
+
+\begin{lstlisting}[name=Validation Request Packing and Response Unpacking Functions]
+int ATMIpack_val_request(const atmi_context_t *ctx,
+                         atmi_session_t *ssn,
+                         const atmi_val_request_t *val);
+
+int ATMIunpack_val_response(const atmi_context_t *ctx,
+                            atmi_session_t *ssn,
+                            const void *pinbuf, size_t nin,
+                            atmi_val_response_t *val);
+\end{lstlisting}
+
+The pack request and unpack response functions require \texttt{ctx}, a pointer
+to the Atonomi library context structure with key data, and \texttt{ssn},
+a pointer to a new or current session structure. The pack function will
+construct an encrypted message with the data in \texttt{val}. The unpack function
+will read \texttt{nin} bytes of packed, encrypted data from \texttt{pinbuf},
+decrypt it, and place the response contents in \texttt{val}.
+
+
+\section{Messages for Device Reputation}
+\begin{lstlisting}[float=h,name=Reputation Request and Response Structures]
+typedef struct {
+	uint8_t  id_requestor[32];
+	uint8_t  id_subject[32];
+	uint8_t  comms_initiator;
+	uint8_t  comms_replyreceived;
+	uint8_t  comms_successful;
+	uint32_t comms_noreplytmout_s;
+} atmi_rep_request_t;
+
+typedef struct {
+	int32_t  success;
+} atmi_rep_response_t;
+\end{lstlisting}
+
+The \texttt{id_requestor} field should be populated with the device ID that
+corresponds to the device making the request. The \texttt{id_subject} field
+should be populated with the device ID of the device to validate.
+
+The \texttt{comms_initiator} field should be populated with a non-zero value
+if the device making the reputation amendment request initiated communications
+with the other device.
+
+The \texttt{comms_replyreceived} field should be populated with a non-zero value
+if any sort of reply was ever received from the other device.
+
+The \texttt{comms_successful} field should be populated with a non-zero value
+if all communications with the other device completed successfully.
+
+The \texttt{comms_noreplytmout_s} field should be set to the communication
+timeout length. This is the number of seconds after attempting to initiate
+communication with another device before the other device's response was
+received.
+
+The \texttt{success} field returned from the server will be zero if the
+request was successful, and negative otherwise.
+
+
+\begin{lstlisting}[name=Reputation Request Packing and Response Unpacking Functions]
+int ATMIpack_rep_request(const atmi_context_t *ctx,
+                         atmi_session_t *ssn,
+                         atmi_rep_request_t *rep);
+
+int ATMIunpack_rep_response(const atmi_context_t *ctx,
+                            atmi_session_t *ssn,
+                            const void *pinbuf, size_t nin,
+                            atmi_rep_response_t *rep);
+\end{lstlisting}
+
+The pack request and unpack response functions require \texttt{ctx}, a pointer
+to the Atonomi library context structure with key data, and \texttt{ssn},
+a pointer to a new or current session structure. The pack function will
+construct an encrypted message with the data in \texttt{rep}. The unpack function
+will read \texttt{nin} bytes of packed, encrypted data from \texttt{pinbuf},
+decrypt it, and place the response contents in \texttt{rep}.
+

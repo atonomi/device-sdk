@@ -37,6 +37,9 @@ The following terms are used throughout this document and associated source code
 	\item Several bytes are prepended to the protected \textit{envelope} to
 		form the Atonomi \textit{packet}. These \textit{packets} comprise
 		the core messaging protocol between devices and Atonomi servers.
+	\item The term \textit{cross-signing} is a piece of data used by or
+		pertaining to some device that has been signed by another device
+		using that other device's public/private keypair.
 \end{itemize}
 
 
@@ -44,7 +47,7 @@ The following terms are used throughout this document and associated source code
 \begin{itemize}
 	\item Developers are required to implement a callback to obtain random data from
 a Hardware Random Number Generator.
-	\item The SDK functions use up to four kilobytes (4096 bytes) of stack space.
+	\item The SDK functions use up to fourty-four hundred (4400 bytes) of stack space.
 		Developers are responsible for ensuring this space is available
 		in order to prevent a stack overflow or stack-heap collision.
 	\item errno-compatible declarations must be available. Developers may either
@@ -64,34 +67,40 @@ The SDK is made available via a GitHub-hosted git repository
 \footnote{\url{https://github.com/atonomi/device-sdk}},
 where it can easily be cloned or otherwise downloaded for use.
 
-The SDK is currently distributed as a pre-compiled static library for
-various architectures, along with a header file providing a C language
-API for use by developers to construct packetized messages for
-the Atonomi network. All libraries are located within the
-\texttt{lib/} subdirectory, and all include files are located within the
-\texttt{include/} subdirectory. See table \ref{t:libatmi_arches} for more
-details about supported platforms.
+In attempt to maximize ease of use, the SDK consists of a
+single-file C implementation, which lends itself to being quickly and
+easily integrated into any new or existing codebases. This exposes
+the API which developers can use to construct packetized messages for
+the Atonomi network.
+
+Atonomi is using CENTRI's Protected Sessions to serve as its protocol's
+cryptographic backend, which is a component
+\textbf{not} accounted for by the C source alone. Due to licensing
+requirements, that component instead must be provided as a prebuilt
+static library and is supplied by its vendor, CENTRI Technology.
+However, builds for multiple architectures are available and can be
+found within the \texttt{lib/} subdirectory. See table \ref{t:libps_arches}
+for more details about supported platforms.
 
 \begin{table}[h]
 \centering
 \begin{tabular}{l l l}
 	\textbf{ISA Family} & \textbf{Core Family} & \textbf{Provided Static Library} \\
 	\hline
-	\texttt{x86_64} & Intel/AMD (64-bit,SSE2)              & \texttt{libatmi-x64-X.Y.Z.a}    \\
-	\texttt{armv6m} & Cortex-M0/M0+/M1 only (32-bit,Thumb) & \texttt{libatmi-armv6m-X.Y.Z.a} \\
-	\texttt{armv7m} & Cortex-M, except -M0 (32-bit,Thumb2) & \texttt{libatmi-armv7m-X.Y.Z.a} \\
-	\texttt{armv7a} & Cortex-A (32-bit,ARM)                & \texttt{libatmi-armv7a-X.Y.Z.a} \\
+	\texttt{x86_64} & Intel/AMD (64-bit,SSE2)    & \texttt{libps-centri-x64-W.X.Y.Z.a} \\
+	\texttt{armv6m} & ARM Cortex-M0/M0+/M1 only  & \texttt{libps-centri-armv6m-W.X.Y.Z.a} \\
+	\texttt{armv7m} & ARM Cortex-M3-compatible   & \texttt{libps-centri-armv7m-W.X.Y.Z.a} \\
+	\texttt{armv7a} & ARM Cortex-A (32-bit)      & \texttt{libps-centri-armv7a-W.X.Y.Z.a} \\
 \end{tabular}
-\caption{Machine architectures currently supported by Atonomi. Note \texttt{X},
-	\texttt{Y}, and \texttt{Z} indicate arbitrary numeric values which
-	collectively denote the library's release version.}
-\label{t:libatmi_arches}
+\caption{Machine architectures currently supported by CENTRI Protected Sessions.
+	Note \texttt{W}, \texttt{X}, \texttt{Y}, and \texttt{Z} indicate
+	arbitrary numeric values which collectively denote the library's
+	release version.}
+\label{t:libps_arches}
 \end{table}
 
-A usage example of pack and unpack routines for an endpoint is present within
-the \texttt{example/} subdirectory. Alongside this is a shell script which
-uses the \texttt{curl} utility to demonstrate a successful HTTP transaction
-with Atonomi servers and the receipt of a response to the submitted request.
+Taken together, the C source and an appropriate CENTRI PS library are
+all that are required to get up and running.
 
 
 \section{Endpoints \&{} HTTP}

@@ -21,6 +21,18 @@ and explicitly clear it afterwards, minimizing exposure to the private key.
 Both methods are acceptable.
 
 \begin{lstlisting}
+void ATMIsign_device_id(const atmi_context_t *ctx,
+                        atmi_session_t *ssn,
+                        uint8_t       idsgn_out[72],
+                        const uint8_t devid_in[32]);
+\end{lstlisting}
+
+The \texttt{ATMIsign_device_id} function is used to cross-sign another
+device's Device ID, \texttt{devid_in}, used to create Device Validation and
+Device Reputation requests. See those sections below for further details.
+
+
+\begin{lstlisting}
 extern void ATMI_memrand(void *p, size_t n);
 \end{lstlisting}
 
@@ -83,6 +95,7 @@ corresponds to the device making the request.
 The \texttt{success} field returned from the server will be zero if the
 request was successful, and negative otherwise.
 
+\pagebreak
 \begin{lstlisting}[name=Activation Request Packing and Response Unpacking Functions]
 int ATMIpack_act_request(const atmi_context_t *ctx,
                          atmi_session_t *ssn,
@@ -107,21 +120,37 @@ decrypt it, and place the response contents in \texttt{act}.
 \begin{lstlisting}[name=Validation Request and Response Structures]
 typedef struct {
 	uint8_t  id_requestor[32];
+	uint8_t  id_requestor_xsigned[72];
 	uint8_t  id_subject[32];
 } atmi_val_request_t;
 
 typedef struct {
-	int32_t  reputation;
+	int32_t  success;
+	int8_t   as_initiator;
+	int8_t   as_responder;
+	int8_t   as_consumer;
+	int8_t   as_provider;
 } atmi_val_response_t;
 \end{lstlisting}
 
 The \texttt{id_requestor} field should be populated with the device ID that
 corresponds to the device making the request. The \texttt{id_subject} field
-should be populated with the device ID of the device to validate.
+should be populated with the device ID of the device to validate. The value
+of the \texttt{id_requestor} field must be sent to the device associated with
+\texttt{id_subject} to be cross-signed; this cross-signed result must be used
+to populate the \texttt{id_requestor_xsigned} field. Additionally, the caller
+must keep a local copy of this value if a reputation amendment request will be
+submitted, since the reputation amendment request message also requires this
+value. This cross-signed result is non-constant and must be repeated for
+each new Validation request.
 
-The \texttt{reputation} field returned from the server corresponds to the
-subject's reputation score. This will be zero if the request was unsuccessful.
+The \texttt{success} field returned from the server corresponds to the
+subject's reputation score. This will be negative if the request was unsuccessful.
 
+The \texttt{int8_t} fields indicate the current reputation state for the
+subject device.
+
+\pagebreak
 \begin{lstlisting}[name=Validation Request Packing and Response Unpacking Functions]
 int ATMIpack_val_request(const atmi_context_t *ctx,
                          atmi_session_t *ssn,
@@ -145,6 +174,7 @@ decrypt it, and place the response contents in \texttt{val}.
 \begin{lstlisting}[float=h,name=Reputation Request and Response Structures]
 typedef struct {
 	uint8_t  id_requestor[32];
+	uint8_t  id_requestor_xsigned[72];
 	uint8_t  id_subject[32];
 	uint8_t  comms_initiator;
 	uint8_t  comms_replyreceived;
@@ -159,7 +189,14 @@ typedef struct {
 
 The \texttt{id_requestor} field should be populated with the device ID that
 corresponds to the device making the request. The \texttt{id_subject} field
-should be populated with the device ID of the device to validate.
+should be populated with the device ID of the device to validate. The value
+of the \texttt{id_requestor} field must have been sent to the device associated
+with \texttt{id_subject} to be cross-signed; this cross-signed result is used
+to populate the \texttt{id_requestor_xsigned} field, and must match exactly
+the contents used to populate the preceeding Validation request. The
+cross-signed result is good for exactly one set of Validation and Reputation
+requests for a particular \texttt{id_subject} and can be destroyed by the caller
+after the Reputation request has been submitted.
 
 The \texttt{comms_initiator} field should be populated with a non-zero value
 if the device making the reputation amendment request initiated communications

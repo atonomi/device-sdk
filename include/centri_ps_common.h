@@ -1,16 +1,16 @@
 /*
  *  centri_ps_common.h
- *  Protected Sessions - Common declarations
+ *  Protected Sessions Library
  *
- *  Copyright (c) 2018 CENTRI Technology. All rights reserved.
+ *  Copyright © 2018 CENTRI Technology. All rights reserved.
  */
-
 #ifndef CENTRI_PS_COMMON_H_
 #define CENTRI_PS_COMMON_H_
 
 #define PS_SESSION_ID_BYTES     16u
 #define PS_KEY_BYTES            32u
 #define PS_IV_BYTES             32u
+#define PS_NONCE_BYTES          24u
 
 #define PS_ERR_OK               0
 #define PS_ERR_ERROR            -1
@@ -39,4 +39,4 @@
 #define PS_CALC_DATA_PKG_SIZE(sessionId, payload)       (8  +32 + PS_ENCODING_OLEN_BYTES((sessionId) + (payload) + 6))
 #define PS_CALC_STOP_PKG_SIZE(sessionId, payload)       (171+32 + PS_ENCODING_OLEN_BYTES((sessionId) + (payload) + 3))
 
-#endif /* CENTRI_PS_COMMON_H_ */
+#endif /*CENTRI_PS_COMMON_H_*/

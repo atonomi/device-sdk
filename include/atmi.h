@@ -19,7 +19,7 @@
  * for encryption, hence the inflated size. This is rounded up to
  * the nearest sizeof(void*) for alignment purposes.
  */
-#define ATMI_SESSBUF_SIZE           (465u)
+#define ATMI_SESSBUF_SIZE           (546u)
 #define ATMI_SESSBUF_STATE_SIZE     (sizeof(PSPackage) + 3u*sizeof(void*))
 
 
@@ -57,7 +57,7 @@ typedef struct {
  * use packet[] as a temporary working buffer only, populating the provided
  * output structure.
  *
- * \note This structure is about 800 bytes in size (platform-dependent).
+ * \note This structure is about 830 bytes in size (platform-dependent).
  */
 typedef struct {
 	uint8_t    state[ATMI_SESSBUF_STATE_SIZE]; /** Internal state data. */
@@ -68,28 +68,38 @@ typedef struct {
 
 /** Device Activation request packet */
 typedef struct {
-	uint8_t  id_requestor[32];     /** Requestor's Device ID.           */
+	uint8_t  id_requestor[32];          /** Requestor's Device ID.       */
 } atmi_act_request_t;
 
 /** Device Validation request packet */
 typedef struct {
-	uint8_t  id_requestor[32];     /** Requestor's Device ID.           */
-	uint8_t  id_subject[32];       /** Subject's Device ID.             */
+	uint8_t  id_requestor[32];          /** Requestor's Device ID.       */
+	uint8_t  id_requestor_xsigned[72];  /** Requestor's Device ID, cross-
+	                                        signed by the subject. Value
+	                                        should be preserved by caller
+	                                        since this value is also used
+	                                        in reputation requests.     */
+	uint8_t  id_subject  [32];          /** Subject's (other) Device ID. */
 } atmi_val_request_t;
 
 /** Device Reputation Amendment request packet */
 typedef struct {
-	uint8_t  id_requestor[32];     /** Requestor's Device ID.           */
-	uint8_t  id_subject[32];       /** Subject's Device ID.             */
+	/* Device IDs */
+	uint8_t  id_requestor[32];          /** Requestor's Device ID.       */
+	uint8_t  id_requestor_xsigned[72];  /** Requestor's Device ID, cross-
+					        signed by the subject. This
+	                                        must exactly match that used
+	                                        in the validation request.   */
+	uint8_t  id_subject  [32];          /** Subject's (other) Device ID. */
 
 	/* Reputation Description: */
-	uint8_t  repinfo_version;      /** Ignore: field is auto-populated. */
-	uint8_t  comms_initiator;      /** bool: 0 = false, otherwise true. */
-	uint8_t  comms_replyreceived;  /** bool: 0 = false, otherwise true. */
-	uint8_t  comms_successful;     /** bool: 0 = false, otherwise true. */
-	uint32_t comms_noreplytmout_s; /** Time allowed for response (sec).
-					   Only applicable when no reply
-					   was received.                    */
+	uint8_t  repinfo_padding_byte;      /** Padding byte: ignore.        */
+	uint8_t  comms_initiator;           /** 0 = false, otherwise true.   */
+	uint8_t  comms_replyreceived;       /** 0 = false, otherwise true.   */
+	uint8_t  comms_successful;          /** 0 = false, otherwise true.   */
+	uint32_t comms_noreplytmout_s;      /** Time allowed for response, in
+	                                        seconds. Only applicable when
+	                                        no reply was received.       */
 } atmi_rep_request_t;
 
 
@@ -101,7 +111,12 @@ typedef struct {
 
 /** Device Validation response packet */
 typedef struct {
-	int32_t  reputation;           /** Subject's reputation score.      */
+	int32_t  success;              /** Query success code/flags.
+	                                   negative = error.                */
+	int8_t   as_initiator;         /** Reputation as comms initiator.   */
+	int8_t   as_responder;         /** Reputation as comms responder.   */
+	int8_t   as_consumer;          /** Reputation as service consumer.  */
+	int8_t   as_provider;          /** Reputation as service provider.  */
 } atmi_val_response_t;
 
 /** Device Reputation Amendment response packet */
@@ -119,7 +134,7 @@ extern "C" {
 /**
  * Pack request message: Device Activation
  *
- * \note          Ensure at least 4KB of stack space are available.
+ * \note          Ensure at least 4400 bytes of stack space are available.
  *
  * \param ctx     Location of Atonomi library context structure.
  * \param ssn     Location of message transaction state. Must be preserved for
@@ -136,7 +151,7 @@ int ATMIpack_act_request(const atmi_context_t *ctx, atmi_session_t *ssn,
 /**
  * Pack request message: Device-Device Validation
  *
- * \note          Ensure at least 4KB of stack space are available.
+ * \note          Ensure at least 4400 bytes of stack space are available.
  *
  * \param ctx     Location of Atonomi library context structure.
  * \param ssn     Location of message transaction state. Must be preserved for
@@ -145,6 +160,8 @@ int ATMIpack_act_request(const atmi_context_t *ctx, atmi_session_t *ssn,
  *
  * \return -EINVAL   Invalid arguments (bad pointers).
  * \return -EFAULT   Could not encrypt message data (bad keys?).
+ * \return -ENXIO    Signed id provided, but signing function never called.
+ * \return -EPIPE
  * \return len > 0   Number of bytes of packed message written to packet buffer.
  */
 int ATMIpack_val_request(const atmi_context_t *ctx, atmi_session_t *ssn,
@@ -153,7 +170,7 @@ int ATMIpack_val_request(const atmi_context_t *ctx, atmi_session_t *ssn,
 /**
  * Pack request message: Reputation Amendment
  *
- * \note          Ensure at least 4KB of stack space are available.
+ * \note          Ensure at least 4400 bytes of stack space are available.
  *
  * \param ctx     Location of Atonomi library context structure.
  * \param ssn     Location of message transaction state. Must be preserved for
@@ -172,7 +189,7 @@ int ATMIpack_rep_request(const atmi_context_t *ctx, atmi_session_t *ssn,
 /**
  * Unpack response message: Device Activation
  *
- * \note          Ensure at least 4KB of stack space are available.
+ * \note          Ensure at least 4400 bytes of stack space are available.
  *
  * \param ctx     Location of Atonomi library context structure.
  * \param ssn     Location of message transaction state. Must have been
@@ -198,7 +215,7 @@ int ATMIunpack_act_response(const atmi_context_t *ctx, atmi_session_t *ssn,
 /**
  * Unpack response message: Device-Device Validation
  *
- * \note          Ensure at least 4KB of stack space are available.
+ * \note          Ensure at least 4400 bytes of stack space are available.
  *
  * \param ctx     Location of Atonomi library context structure.
  * \param ssn     Location of message transaction state. Must have been
@@ -224,7 +241,7 @@ int ATMIunpack_val_response(const atmi_context_t *ctx, atmi_session_t *ssn,
 /**
  * Unpack response message: Reputation Amendment
  *
- * \note          Ensure at least 4KB of stack space are available.
+ * \note          Ensure at least 4400 bytes of stack space are available.
  *
  * \param ctx     Location of Atonomi library context structure.
  * \param ssn     Location of message transaction state. Must have been
@@ -246,6 +263,41 @@ int ATMIunpack_val_response(const atmi_context_t *ctx, atmi_session_t *ssn,
 int ATMIunpack_rep_response(const atmi_context_t *ctx, atmi_session_t *ssn,
                             const void *pinbuf, size_t nin,
                             atmi_rep_response_t *rep);
+
+
+
+/**
+ * Sign the provided Device ID with this device's keypair.
+ *
+ * \note A cross-signed Device ID is a Device ID value that has been signed
+ *       by another party. In order to correctly construct and pack
+ *       validation and reputation requests, the requestor needs the subject's
+ *       Device ID in addition to its own ID that's been signed by the subject
+ *       (yielding the requestor's cross-signed ID). This cross-signing
+ *       process prevents malicious devices from submitting false reputation
+ *       reports against other devices when transactions did not occur.
+ *
+ *       Note that the signing procedure incorporates some randomly-generated
+ *       source data into its output, so assuming a constant Device ID input
+ *       value, each call to this function will generate different output.
+ *
+ *       Ensure at least 3000 bytes of stack space are available.
+ *
+ * \param ctx       Location of Atonomi library context structure.
+ * \param ssn       Location of message transaction state.
+ * \param idsgn_out Location in which to store signed Device ID output.
+ *                  This output is 72 bytes in length.
+ * \param devid_in  Location of input Device ID to be signed.
+ *                  This input is 32 bytes in length.
+ *
+ * \return -EINVAL   Invalid arguments (bad pointers).
+ * \return -EFAULT   Signing procedure failed (bad keys?).
+ * \return 0         Success. Signed Device ID written to \param id_signed.
+ */
+int ATMIsign_device_id(const atmi_context_t *ctx, atmi_session_t *ssn,
+                       uint8_t       idsgn_out[72],
+                       const uint8_t devid_in [32]);
+
 
 
 /*

@@ -23,21 +23,20 @@ element on the device. Device identity will be created during the device or
 application development process. Developers need to ensure a unique identifier
 is given to each device as the Atonomi Network doesn't allow duplicate
 registrations. Identity also incorporates an Elliptic Curve 25519 public/private
-key pair created during the either the development or manufacturing process,
-as this is required for later device registration with Atonomi. The SDK includes
-an EC 25519 key generation tool.
+key pair created during either the development or manufacturing process,
+as this is required for later device registration with Atonomi.
 
 
 \section{Device Registration}
 The Atonomi Identity Registration Service (IRS) is the primary component,
 that when globally distributed, becomes the central hub of the Atonomi Identity
 Registry Network (IRN). The IRS is a cloud-based, globally accessible, highly
-available, high volume service that essentially provides the first step in the
-Atonomi process. Devices that have been Atonomi enabled via the Atonomi Embedded
+available service that essentially provides the first step in the
+Atonomi process. Devices that have been Atonomi-enabled via the Atonomi Embedded
 SDK will contact the Identity Registration Service upon first production boot.
 Devices will submit to the IRS their identity token. The manufacturer or
-developer of the device will have pre-registered that devices identity with the
-IRS via the manufacturer GUI. Assuming the IRS finds a match to the devices
+developer of the device will have pre-registered that device's identity with the
+IRS via the manufacturer GUI. Assuming the IRS finds a match to the device's
 identity in its white-list, the device will become activated (within the
 Atonomi network).
 
@@ -49,13 +48,13 @@ facilitates the payment in ATMI for the Registration of devices.
 
 
 \section{Device Activation}
-The Atonomi Activation Functionality comes into play after the Atonomi enabled
+The Atonomi Activation functionality comes into play after the Atonomi-enabled
 device has been sold to an end user. The end user will receive activation
 instructions that send them to the Atonomi web portal where they will enter the
 device identifier and pay for device activation via MetaMask. The Atonomi
 Embedded SDK, integrated into the application code by the developer or OEM,
 will contact the Activation Service upon first production boot. Assuming the
-IRS finds a match to the devices identity in its whitelist, its signature is
+IRS finds a match to the device's identity in its whitelist, its signature is
 verified, and the activation payment cleared, the device will become activated
 within the Atonomi network.
 
@@ -67,18 +66,18 @@ handle the activation transaction.
 
 
 \section{Device Validation \&{} Reputation}
-Devices that have been Atonomi enabled via the Atonomi Embedded SDK and that
+Devices that have been Atonomi-enabled via the Atonomi Embedded SDK and that
 have successfully registered and activated on the Atonomi network can begin to
 utilize the Atonomi Validation functionality. Devices will exchange their
 signed device identifier with other devices that they want to transact with.
 Each device can then call the Atonomi Validation Service, pass in its
 counterpart's signed device identifier and receive back an indicator of
-whether or not the device is an Atonomi network `member' or not. In the event
+whether or not the device is an Atonomi network `member'. In the event
 that the other device is a member of the network, the Atonomi Validation
-Service will also send back the current reputation for that device.
+Service will also send back the current reputation for that.
 
-\textbf{Note:} For the purposes of Validation the Embedded SDK will have two
-additional methods for validating another devices identity. The first
+For the purposes of Validation the Embedded SDK will have two
+additional methods for validating another device's identity. The first
 method will involve producing a CENTRI Protected Sessions handshake package
 to be sent to another device for validation. The second method will involve
 taking in a signed device identity (from another device via the Protected
@@ -86,6 +85,21 @@ Sessions handshake) and submitting it to the Atonomi Validation Service
 to be validated. The latter method will return a reputation score if the
 other device is valid.
 
+The reputation score obtained during Validation contains four independent
+scores: Initiator, Responder, Consumer, and Provider (see section
+\ref{s:api_validation}). These scores establish an historical trend that can
+be correlated with the perceived trust when the device acted as an initiator,
+responder, consumer, or provider. The four scores are defined as follows:
+
+\begin{itemize}
+	\item Initiator: The device that originates or initiates the
+		transaction.
+	\item Responder Device: The device that receives the transaction request.
+	\item Consumer User: The owner or user of the device that initiated
+		the transaction request.
+	\item Provider User: The owner or user of the device that responded to
+		the transaction request.
+\end{itemize}
 
 
 \section{Atonomi Smart Contract}

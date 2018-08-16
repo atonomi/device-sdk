@@ -85,6 +85,11 @@
 
 
 %%--------------------------------------------------
+%% obtain document version string to use
+\input{docversion.tex}
+
+
+%%--------------------------------------------------
 %% Title Page
 \newlength\drop
 \makeatletter
@@ -97,7 +102,7 @@
 	\vfill
 	\par
 	\vfill
-	{\Large Document Version 1.0.20180515}\par
+	{\Large Document Version \docversion}\par
 	\vspace*{2\drop}
 \endgroup}%
 \makeatother

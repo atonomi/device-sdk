@@ -8,7 +8,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
-#include "centri_ps.h"
+#include "lib/centri_ps.h"
 
 
 /*
@@ -19,7 +19,7 @@
  * for encryption, hence the inflated size. This is rounded up to
  * the nearest sizeof(void*) for alignment purposes.
  */
-#define ATMI_SESSBUF_SIZE           (546u)
+#define ATMI_SESSBUF_SIZE           (537u)
 #define ATMI_SESSBUF_STATE_SIZE     (sizeof(PSPackage) + 3u*sizeof(void*))
 
 
@@ -78,30 +78,27 @@ typedef struct {
 	                                        signed by the subject. Value
 	                                        should be preserved by caller
 	                                        since this value is also used
-	                                        in reputation requests.     */
+	                                        in reputation requests.      */
 	uint8_t  id_subject  [32];          /** Subject's (other) Device ID. */
 } atmi_val_request_t;
 
-/** Device Reputation Amendment request packet */
+/** Device Reputation request packet */
 typedef struct {
 	/* Device IDs */
 	uint8_t  id_requestor[32];          /** Requestor's Device ID.       */
-	uint8_t  id_requestor_xsigned[72];  /** Requestor's Device ID, cross-
-					        signed by the subject. This
-	                                        must exactly match that used
-	                                        in the validation request.   */
 	uint8_t  id_subject  [32];          /** Subject's (other) Device ID. */
+	uint8_t  reputation_token[16];      /** Reputation token received from
+	                                        validation response. This is
+	                                        a one-time use token.        */
 
 	/* Reputation Description: */
-	uint8_t  repinfo_padding_byte;      /** Padding byte: ignore.        */
-	uint8_t  comms_initiator;           /** 0 = false, otherwise true.   */
-	uint8_t  comms_replyreceived;       /** 0 = false, otherwise true.   */
-	uint8_t  comms_successful;          /** 0 = false, otherwise true.   */
-	uint32_t comms_noreplytmout_s;      /** Time allowed for response, in
-	                                        seconds. Only applicable when
-	                                        no reply was received.       */
+	uint8_t  comms_replyreceived;       /** 0 = false, otherwise true. 
+	                                        Remote device responded to 
+	                                        initial communication        */
+	uint8_t  comms_successful;          /** 0 = false, otherwise true. 
+	                                        Communication completed 
+	                                        expectedly.                  */
 } atmi_rep_request_t;
-
 
 
 /** Device Activation response packet */
@@ -113,10 +110,11 @@ typedef struct {
 typedef struct {
 	int32_t  success;              /** Query success code/flags.
 	                                   negative = error.                */
-	int8_t   as_initiator;         /** Reputation as comms initiator.   */
-	int8_t   as_responder;         /** Reputation as comms responder.   */
-	int8_t   as_consumer;          /** Reputation as service consumer.  */
-	int8_t   as_provider;          /** Reputation as service provider.  */
+	uint8_t  reputation_token[16]; /** Reputation token used during 
+                                           reputation submission.           */
+	uint32_t reputation_total;     /** Total reputation submissions.    */
+	uint32_t comm_reply_count;     /** Successful reply received count  */
+	uint32_t comm_success_count;   /** Successful communication count.  */
 } atmi_val_response_t;
 
 /** Device Reputation Amendment response packet */

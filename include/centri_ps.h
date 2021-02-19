@@ -2,7 +2,7 @@
  *  centri_ps.h
  *  Protected Sessions Library
  *
- *  Copyright © 2018 CENTRI Technology. All rights reserved.
+ *  Copyright Â© 2018 CENTRI Technology. All rights reserved.
  */
 #ifndef CENTRI_PS_H_
 #define CENTRI_PS_H_
@@ -27,7 +27,7 @@ extern "C" {
     int pse_generate_data_package (const PSKeys* seKeys, PSPackage* dataPackage);
     int pse_generate_stop_package (const PSKeys* seKeys, PSPackage* stopPackage, uint8_t reason);
 */
-/* This structure stores session inforamtion.
+/* This structure stores session information.
    It does not need to be modified or used directly by the user, however
    the user needs to store this for the lifetime of a given session */
 typedef struct PSSession
@@ -60,7 +60,7 @@ typedef struct PSPackage
     size_t          outBufWritten;  /* [OUT] Actual bytes written by the system after calling a function to make a package */
     PSSession       sessionInfo;    /* [IN-OUT] For the session manager, leave this null.  It will either be populated by the manager when decoding a request,
                                                 or via a callback for the manager to lookup and return.
-                                                For and endpoint, this must be provided and is obtained through a call to pse_generate_request */
+                                                For an endpoint, this must be provided and is obtained through a call to pse_generate_request */
 } PSPackage;
 
 /* This structure is passed to all callbacks for both endpoint and manager.
@@ -173,7 +173,7 @@ int psm_process_incoming_package (const PSMPackageHandler* packageHandler, const
 
 /**
 * Session manager call to create a response package for an session endpoint request package
-* @param smKeys contains a structure holding the public and private keys for the session manager.  This must be populated.
+* @param smKeys contains a structure holding the public and private keys for the session manager. This must be populated.
 * @param responsePackage contains both input and output buffers, a user context.  When the function exits, it will also contain the session information
 * @return On success, PS_ERR_OK otherwise, one of the PS_ERR_* values.
 */
